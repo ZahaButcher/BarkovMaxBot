@@ -25,7 +25,7 @@ from maxapi.types import (
     MessageChatCreated  # deprecated: 0.9.14
 )
 from maxapi.utils.inline_keyboard import InlineKeyboardBuilder
-
+load_dotenv()
 # Токен берется из переменной окружения
 TOKEN = os.environ.get("MAX_BOT_TOKEN")
 if not TOKEN:
