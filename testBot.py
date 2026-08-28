@@ -27,7 +27,7 @@ from maxapi.types import (
 from maxapi.utils.inline_keyboard import InlineKeyboardBuilder
 load_dotenv()
 # Токен берется из переменной окружения
-TOKEN = os.environ.get("MAX_BOT_TOKEN")
+TOKEN = os.environ.get("MAX_BOT_TOKEN_DEV")
 if not TOKEN:
     raise ValueError("MAX_BOT_TOKEN не установлен!")
 
