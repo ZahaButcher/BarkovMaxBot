@@ -1,6 +1,9 @@
 import asyncio
 import logging
 
+from dotenv import load_dotenv
+import os
+import json
 from maxapi import Bot, Dispatcher
 from maxapi.types import (
     BotStarted,
@@ -22,10 +25,15 @@ from maxapi.types import (
     MessageChatCreated  # deprecated: 0.9.14
 )
 from maxapi.utils.inline_keyboard import InlineKeyboardBuilder
+load_dotenv()
+# Токен берется из переменной окружения
+TOKEN = os.environ.get("MAX_BOT_TOKEN")
+if not TOKEN:
+    raise ValueError("MAX_BOT_TOKEN не установлен!")
 
+
+bot = Bot(token=TOKEN)
 logging.basicConfig(level=logging.INFO)
-
-bot = Bot('f9LHodD0cOJyOdfq2oli-LfAHjeex0LiefpkrzOr2ZL1KC_SBwOoKphipn4kxVSZTjnoTQ8xro2JyHzqK7RJ')
 
 dp = Dispatcher()
 
