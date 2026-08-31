@@ -1,6 +1,6 @@
 import asyncio
 import logging
-
+import certifi
 from dotenv import load_dotenv
 import os
 import json
@@ -26,11 +26,13 @@ from maxapi.types import (
 )
 from maxapi.utils.inline_keyboard import InlineKeyboardBuilder
 load_dotenv()
+
 # Токен берется из переменной окружения
 TOKEN = os.environ.get("MAX_BOT_TOKEN_DEV")
 if not TOKEN:
     raise ValueError("MAX_BOT_TOKEN не установлен!")
-
+os.environ['SSL_CERT_FILE'] = certifi.where()
+os.environ['REQUESTS_CA_BUNDLE'] = certifi.where()
 
 bot = Bot(token=TOKEN)
 logging.basicConfig(level=logging.INFO)
@@ -84,12 +86,12 @@ async def hello(event: MessageCreated):
 @dp.message_created(Command('blacklist'))
 async def hello(event: MessageCreated):
     if event.message.body.text:
-        stroka = "самых разыскиваемых уличных гонщиков:\n"
+        stroka = "самых разыскиваемых уличных гонщиков:\n\n"
         count = 0
         for i in numbers:
             if numbers[i]['name'] == "Не найден":
                 count += 1
-                stroka += f"{i}\n"
+                stroka += f"{i} - {numbers[i]['marks']}\n"
         # await event.message.answer(f"Вы написали: {event.message.body.text}")
         await event.message.answer(f"{count} {stroka}")
 

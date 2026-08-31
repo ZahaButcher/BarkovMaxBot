@@ -14,13 +14,13 @@ with open("numbers.json", "r", encoding="utf-8") as f:
 # print(stroka)
 
 
-stroka = "самых разыскиваемых уличных гонщиков:\n"
+stroka = "самых разыскиваемых уличных гонщиков:\n\n"
 count = 0
 for i in numbers:
     if numbers[i]['name'] == "Не найден":
         count += 1
-        stroka += f"{i}\n"
-print(f"{count} {stroka}")
+        stroka += f"{i} - {numbers[i]['marks']}\n"
+print(count, stroka)
 exit()
 stroka = f"A\n"
 for i, j in sorted(numbers.items()):

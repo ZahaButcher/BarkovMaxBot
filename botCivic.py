@@ -84,12 +84,12 @@ async def hello(event: MessageCreated):
 @dp.message_created(Command('blacklist'))
 async def hello(event: MessageCreated):
     if event.message.body.text:
-        stroka = "самых разыскиваемых уличных гонщиков:\n"
+        stroka = "самых разыскиваемых уличных гонщиков:\n\n"
         count = 0
         for i in numbers:
             if numbers[i]['name'] == "Не найден":
                 count += 1
-                stroka += f"{i}\n"
+                stroka += f"{i} - {numbers[i]['marks']}\n"
         # await event.message.answer(f"Вы написали: {event.message.body.text}")
         await event.message.answer(f"{count} {stroka}")
 
