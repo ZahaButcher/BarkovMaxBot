@@ -45,7 +45,7 @@ with open("numbers.json", "r", encoding="utf-8") as f:
 async def hello(event: MessageCreated):
     if event.message.body.text:
         # await event.message.answer(f"Вы написали: {event.message.body.text}")
-        await event.message.answer(f"Здравствуйте!\nНапиши 'наш 603' и я отвечу наш или не наш.\n/family - все")
+        await event.message.answer(f"Здравствуйте!\nНапиши 'наш 603' и я отвечу наш или не наш.\n/family - все\n/blacklist - разыскиваемые гонщики")
     # builder = InlineKeyboardBuilder()
     #
     # builder.row(
@@ -80,6 +80,18 @@ async def hello(event: MessageCreated):
             stroka += f"{i} {j['name']}\n"
         # await event.message.answer(f"Вы написали: {event.message.body.text}")
         await event.message.answer(f"{stroka}")
+
+@dp.message_created(Command('blacklist'))
+async def hello(event: MessageCreated):
+    if event.message.body.text:
+        stroka = "самых разыскиваемых уличных гонщиков:\n"
+        count = 0
+        for i in numbers:
+            if numbers[i]['name'] == "Не найден":
+                count += 1
+                stroka += f"{i}\n"
+        # await event.message.answer(f"Вы написали: {event.message.body.text}")
+        await event.message.answer(f"{count} {stroka}")
 
 @dp.message_created()  # Я создал, i created
 async def start_handler(event: MessageCreated):
