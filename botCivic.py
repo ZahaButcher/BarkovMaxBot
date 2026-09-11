@@ -1,6 +1,6 @@
 import asyncio
 import logging
-
+import re
 from dotenv import load_dotenv
 import os
 import json
@@ -37,6 +37,8 @@ logging.basicConfig(level=logging.INFO)
 
 dp = Dispatcher()
 
+
+numbers = ""
 with open("numbers.json", "r", encoding="utf-8") as f:
     numbers = json.load(f)
 
@@ -77,7 +79,7 @@ async def hello(event: MessageCreated):
     if event.message.body.text:
         stroka = f"All: {len(numbers)}\n"
         for i, j in sorted(numbers.items()):
-            stroka += f"{i} {j['name']}\n"
+            stroka += f"{i:<9} - {j['name']}\n"
         # await event.message.answer(f"Вы написали: {event.message.body.text}")
         await event.message.answer(f"{stroka}")
 
@@ -89,7 +91,7 @@ async def hello(event: MessageCreated):
         for i in numbers:
             if numbers[i]['name'] == "Не найден":
                 count += 1
-                stroka += f"{i} - {numbers[i]['marks']}\n"
+                stroka += f"{i:<9} - {numbers[i]['marks']}\n"
         # await event.message.answer(f"Вы написали: {event.message.body.text}")
         await event.message.answer(f"{count} {stroka}")
 
