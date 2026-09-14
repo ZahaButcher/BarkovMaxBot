@@ -73,6 +73,18 @@ async def hello(event: MessageCreated):
     #         builder.as_markup(),
     #     ]
     # )
+@dp.message_created(Command('updatedb'))
+async def hello(event: MessageCreated):
+    if event.message.body.text:
+        # await event.message.answer(f"Вы написали: {event.message.body.text}")
+        global numbers
+
+        with open("numbers.json", "r", encoding="utf-8") as f:
+            numbers = json.load(f)
+
+        await event.message.answer(f"Данные в базе обновлены!")
+
+
 
 @dp.message_created(Command('family'))
 async def hello(event: MessageCreated):
@@ -91,7 +103,7 @@ async def hello(event: MessageCreated):
         for i in numbers:
             if numbers[i]['name'] == "Не найден":
                 count += 1
-                stroka += f"{i:<9} - {numbers[i]['marks']}\n"
+                stroka += f"{i:<{18-len(i)}} - {numbers[i]['marks']}\n"
         # await event.message.answer(f"Вы написали: {event.message.body.text}")
         await event.message.answer(f"{count} {stroka}")
 
@@ -102,11 +114,20 @@ async def start_handler(event: MessageCreated):
         return
     res = ''.join(filter(str.isdigit, text))
     if res == "":
+        res = re.sub(r'[^a-zA-Zа-яА-ЯёЁ\s]', '', text).lower().replace("наш", "").strip()
+        stroka = f"{event.from_user.first_name}, возможно это:\n\n"
+        for i, j in sorted(numbers.items()):
+            # print(j["name"])
+            if res in j["name"].lower():
+                stroka += f"{i:<{18 - len(i)}} - {j['name']}\n"
+        await event.message.answer(f"{stroka}")
         return
-    for i in numbers:
-        if res in i:
-            await event.message.answer(f"{event.from_user.first_name}, это {numbers[i]['name']}!")
-            return
+    if res.isdigit():
+        for i in numbers:
+            if res in i:
+                await event.message.answer(f"{event.from_user.first_name}, это {numbers[i]['name']}!")
+                return
+
     await event.message.answer(f"{event.from_user.first_name}, это не наш!")
 
     # await event.message.answer(f"{event.from_user.first_name}, вижу твое сообщение:\n{event.message.body.text}")

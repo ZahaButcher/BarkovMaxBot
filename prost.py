@@ -9,11 +9,11 @@ with open("numbers.json", "r", encoding="utf-8") as f:
 # -----------------------------------------------------
 
 #All users
-# stroka = f"All: {len(numbers)}\n"
-# for i, j in sorted(numbers.items()):
-#     stroka += f"{i:<9} - {j['name']}\n"
-# print(stroka)
-
+stroka = f"All: {len(numbers)}\n"
+for i, j in sorted(numbers.items()):
+    stroka += f"{i:<{18 - len(i)}} - {j['name']}\n"
+print(stroka)
+exit()
 # -----------------------------------------------------
 # stroka = "самых разыскиваемых уличных гонщиков:\n\n"
 # count = 0

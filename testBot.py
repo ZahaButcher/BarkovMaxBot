@@ -75,13 +75,25 @@ async def hello(event: MessageCreated):
     #         builder.as_markup(),
     #     ]
     # )
+@dp.message_created(Command('updatedb'))
+async def hello(event: MessageCreated):
+    if event.message.body.text:
+        # await event.message.answer(f"Вы написали: {event.message.body.text}")
+        global numbers
+
+        with open("numbers.json", "r", encoding="utf-8") as f:
+            numbers = json.load(f)
+
+        await event.message.answer(f"Данные в базе обновлены!")
+
+
 
 @dp.message_created(Command('family'))
 async def hello(event: MessageCreated):
     if event.message.body.text:
         stroka = f"All: {len(numbers)}\n"
         for i, j in sorted(numbers.items()):
-            stroka += f"{i:<9} {j['name']}\n"
+            stroka += f"{i:<9} - {j['name']}\n"
         # await event.message.answer(f"Вы написали: {event.message.body.text}")
         await event.message.answer(f"{stroka}")
 
@@ -93,7 +105,7 @@ async def hello(event: MessageCreated):
         for i in numbers:
             if numbers[i]['name'] == "Не найден":
                 count += 1
-                stroka += f"{i:<9} - {numbers[i]['marks']}\n"
+                stroka += f"{i:<{18-len(i)}} - {numbers[i]['marks']}\n"
         # await event.message.answer(f"Вы написали: {event.message.body.text}")
         await event.message.answer(f"{count} {stroka}")
 
@@ -105,12 +117,12 @@ async def start_handler(event: MessageCreated):
     res = ''.join(filter(str.isdigit, text))
     if res == "":
         res = re.sub(r'[^a-zA-Zа-яА-ЯёЁ\s]', '', text).lower().replace("наш", "").strip()
-
-        for i, j in numbers.items():
+        stroka = f"{event.from_user.first_name}, возможно это:\n\n"
+        for i, j in sorted(numbers.items()):
             # print(j["name"])
             if res in j["name"].lower():
-                await event.message.answer(f"{i:<9} - {j['name']}")
-
+                stroka += f"{i:<{18 - len(i)}} - {j['name']}\n"
+        await event.message.answer(f"{stroka}")
         return
     if res.isdigit():
         for i in numbers:
