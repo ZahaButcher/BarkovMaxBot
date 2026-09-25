@@ -1,13 +1,13 @@
-# from deep_translator import GoogleTranslator
+from deep_translator import GoogleTranslator
 #
-# text = "Hello, how are you?"
-#
-# translated = GoogleTranslator(
-#     source="en",
-#     target="ru"
-# ).translate(text)
-#
-# print(translated)
+text = "Hello, how are you?"
+
+translated = GoogleTranslator(
+    source="en",
+    target="ru"
+).translate(text)
+
+print(translated)
 # ------------------------------------------
 
 # from ollama import chat
@@ -27,3 +27,9 @@
 #
 # print(response.message.content)
 # ------------------------------------------
+
+from searchx import Client
+
+client = Client()
+results = client.search("Кот")
+print(results)

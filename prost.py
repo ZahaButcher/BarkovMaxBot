@@ -1,6 +1,6 @@
 import json
 import re
-
+from itertools import count
 
 numbers = dict()
 
@@ -9,16 +9,21 @@ with open("numbers.json", "r", encoding="utf-8") as f:
 # -----------------------------------------------------
 
 #All users
-stroka = f"All: {len(numbers)}\n"
-for i, j in sorted(numbers.items()):
-    stroka += f"{i:<{18 - len(i)}} - {j['name']}\n"
-print(stroka)
-exit()
+# allstroka = f"All: "
+# stroka = f""
+# count = 0
+# for i, j in sorted(numbers.items()):
+#     if j['name'] not in  ["Не пойман", "хз"]:
+#         count += 1
+#         stroka += f"{i:<{18 - len(i)}} - {j['name']}\n"
+# allstroka += f"{count}\n{stroka}"
+# print(allstroka)
+# exit()
 # -----------------------------------------------------
 # stroka = "самых разыскиваемых уличных гонщиков:\n\n"
 # count = 0
-# for i in numbers:
-#     if numbers[i]['name'] == "Не найден":
+# for i in sorted(numbers):
+#     if numbers[i]['name'] in ["Не пойман", "хз"]:
 #         count += 1
 #         stroka += f"{i:<9} - {numbers[i]['marks']}\n"
 # print(count, stroka)
@@ -26,13 +31,24 @@ exit()
 # stroka = f"A\n"
 # for i, j in sorted(numbers.items()):
 #     stroka += f"{i} {j['name']}\n"
-#
+# exit()
+
 # ------------------------------------------------------
 
+txt = "Наш вит"
+if "наш" in txt.lower().split(" "):
+    print(True)
+else:
+    print(False)
 
-
-#search user
-text = "наш иван"
+# for i, j in sorted(numbers.items()):
+#     if j.get("desc"):
+#         print(i, j.get("desc"))
+#
+#
+# exit()
+# #search user
+# text = "наш иван"
 # if not "наш" in text.lower():
 #     # return
 #     pass

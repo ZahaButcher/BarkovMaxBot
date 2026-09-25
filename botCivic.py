@@ -33,7 +33,13 @@ if not TOKEN:
 
 
 bot = Bot(token=TOKEN)
-logging.basicConfig(level=logging.INFO)
+# logging.basicConfig(level=logging.INFO)
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S"
+)
 
 dp = Dispatcher()
 
@@ -47,7 +53,11 @@ with open("numbers.json", "r", encoding="utf-8") as f:
 async def hello(event: MessageCreated):
     if event.message.body.text:
         # await event.message.answer(f"Вы написали: {event.message.body.text}")
-        await event.message.answer(f"Здравствуйте!\nНапиши 'наш 603' и я отвечу наш или не наш.\n/family - все\n/blacklist - разыскиваемые гонщики")
+        await event.message.answer(f"Здравствуйте!\n"
+                                   f"Напиши 'наш 603' или 'наш Захар' и я отвечу наш или не наш.\n"
+                                   f"/all - все\n"
+                                   f"/family - все наши\n"
+                                   f"/blacklist - разыскиваемые гонщики")
     # builder = InlineKeyboardBuilder()
     #
     # builder.row(
@@ -84,9 +94,7 @@ async def hello(event: MessageCreated):
 
         await event.message.answer(f"Данные в базе обновлены!")
 
-
-
-@dp.message_created(Command('family'))
+@dp.message_created(Command('all'))
 async def hello(event: MessageCreated):
     if event.message.body.text:
         stroka = f"All: {len(numbers)}\n"
@@ -95,13 +103,27 @@ async def hello(event: MessageCreated):
         # await event.message.answer(f"Вы написали: {event.message.body.text}")
         await event.message.answer(f"{stroka}")
 
+@dp.message_created(Command('family'))
+async def hello(event: MessageCreated):
+    if event.message.body.text:
+        allstroka = f"All: "
+        stroka = f""
+        count = 0
+        for i, j in sorted(numbers.items()):
+            if j['name'] not in ["Не пойман", "хз"]:
+                count += 1
+                stroka += f"{i:<{18 - len(i)}} - {j['name']}\n"
+        allstroka += f"{count}\n{stroka}"
+        # await event.message.answer(f"Вы написали: {event.message.body.text}")
+        await event.message.answer(f"{allstroka}")
+
 @dp.message_created(Command('blacklist'))
 async def hello(event: MessageCreated):
     if event.message.body.text:
         stroka = "самых разыскиваемых уличных гонщиков:\n\n"
         count = 0
-        for i in numbers:
-            if numbers[i]['name'] == "Не найден":
+        for i in sorted(numbers):
+            if numbers[i]['name'] in ["Не пойман", "хз"]:
                 count += 1
                 stroka += f"{i:<{18-len(i)}} - {numbers[i]['marks']}\n"
         # await event.message.answer(f"Вы написали: {event.message.body.text}")
@@ -110,23 +132,43 @@ async def hello(event: MessageCreated):
 @dp.message_created()  # Я создал, i created
 async def start_handler(event: MessageCreated):
     text = event.message.body.text
-    if not "наш" in text.lower():
+    if not "наш" in text.lower().split():
         return
     res = ''.join(filter(str.isdigit, text))
     if res == "":
+        found = False
         res = re.sub(r'[^a-zA-Zа-яА-ЯёЁ\s]', '', text).lower().replace("наш", "").strip()
         stroka = f"{event.from_user.first_name}, возможно это:\n\n"
         for i, j in sorted(numbers.items()):
             # print(j["name"])
             if res in j["name"].lower():
-                stroka += f"{i:<{18 - len(i)}} - {j['name']}\n"
-        await event.message.answer(f"{stroka}")
+                found = True
+                stroka += f"{i:<{18 - len(i)}} - {j['name']}"
+                if j.get("desc"):
+                    stroka += f" - '{j.get('desc')}'"
+                stroka += "\n"
+        await event.message.answer(f"{stroka}") if found else await event.message.answer(f"{event.from_user.first_name}, это не наш!")
         return
     if res.isdigit():
-        for i in numbers:
+        found = False
+        stroka = f"{event.from_user.first_name}, возможно это:\n\n"
+        for i, j in sorted(numbers.items()):
+            # print(j["name"])
+            # if res in j["name"].lower():
             if res in i:
-                await event.message.answer(f"{event.from_user.first_name}, это {numbers[i]['name']}!")
-                return
+                found = True
+                stroka += f"{i:<{18 - len(i)}} - {j['name']}"
+                if j.get("desc"):
+                    stroka += f" - '{j.get('desc')}'"
+                stroka += "\n"
+
+        await event.message.answer(f"{stroka}") if found else await event.message.answer(f"{event.from_user.first_name}, это не наш!")
+        return
+        # old snizy
+        # for i in numbers:
+        #     if res in i:
+        #         await event.message.answer(f"{event.from_user.first_name}, это {numbers[i]['name']}!")
+        #         return
 
     await event.message.answer(f"{event.from_user.first_name}, это не наш!")
 
